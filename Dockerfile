@@ -39,6 +39,28 @@ RUN apk add --no-cache tzdata
 COPY --from=BUILD_IMAGE /app /app
 WORKDIR /app
 
+RUN apt-get update
+
+RUN apt-get install curl git unzip zip -y
+
+RUN chmod 777 /root 
+
+RUN sudo apt install fuse -y
+
+RUN curl https://rclone.org/install.sh | sudo bash
+
+RUN rclone version
+
+RUN sudo mkdir /media/gdrive
+
+RUN sudo chmod 777 /media/gdrive
+
+RUN sudo mkdir /root/.config/rclone/
+
+ADD /rclone.conf /root/.config/rclone/rclone.conf
+
+RUN rclone mount gdrive: /media/gdrive --allow-other --vfs-cache-mode full
+
 CMD yarn start
 
 EXPOSE 5055
